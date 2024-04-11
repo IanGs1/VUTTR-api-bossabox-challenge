@@ -12,3 +12,23 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model Tool {
+  id          String @id @default(uuid())
+  title       String @unique
+  link        String
+  description String
+  Tag         Tag[]
+
+  @@map("tools")
+}
+
+model Tag {
+  id   String @id @default(uuid())
+  name String
+
+  tool    Tool   @relation(fields: [tool_id], references: [id])
+  tool_id String
+
+  @@map("tags")
+}
