@@ -4,6 +4,7 @@ import { PrismaToolsRepository } from "@/repositories/prisma/prisma-tools-reposi
 
 import { CreateToolUseCase } from "@/useCases/create-tool-useCase";
 import { ListAllToolsUseCase } from "@/useCases/list-all-tools-useCase";
+import { FindAToolByTagUseCase } from "@/useCases/find-a-tool-by-tag-useCase";
 import { DeleteToolUseCase } from "@/useCases/delete-tool-useCase";
 
 import { z } from "zod";
@@ -42,10 +43,25 @@ export async function toolsController(app: FastifyInstance) {
   });
 
   app.get("/", async (request: FastifyRequest, reply: FastifyReply) => {
+    const findByTagSchema = z.object({
+      tag: z.string(),
+    });
+
+    const _tag = findByTagSchema.safeParse(request.query);
+    let tools = [];
+
+    if (_tag.success) {
+      const { tag } = _tag.data;
+
+      const findAToolByTagUseCase = new FindAToolByTagUseCase(prismaToolsRepository);
+      tools = await findAToolByTagUseCase.execute(tag);
+
+      return reply.status(200).send(tools);
+    }
+
     try {
       const listAllToolsUseCase = new ListAllToolsUseCase(prismaToolsRepository);
-
-      const tools = await listAllToolsUseCase.execute();
+      tools = await listAllToolsUseCase.execute();
 
       return reply.status(200).send(tools);
     } catch (error) {
