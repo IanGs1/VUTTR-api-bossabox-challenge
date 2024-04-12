@@ -1,5 +1,3 @@
-import { Prisma, Tag, Tool } from "@prisma/client";
-
 export interface ICreateTool {
   title: string;
   link: string;
