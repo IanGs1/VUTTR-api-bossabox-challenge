@@ -1,7 +1,9 @@
-import { PrismaToolsRepository } from "@/repositories/prisma/prisma-tools-repository";
-import { CreateToolUseCase } from "@/useCases/create-tool-useCase";
-
 import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
+
+import { PrismaToolsRepository } from "@/repositories/prisma/prisma-tools-repository";
+
+import { CreateToolUseCase } from "@/useCases/create-tool-useCase";
+import { ListAllToolsUseCase } from "@/useCases/list-all-tools-useCase";
 
 import { z } from "zod";
 
@@ -36,5 +38,23 @@ export async function toolsController(app: FastifyInstance) {
         })
       };
     };
-  })
+  });
+
+  app.get("/", async (request: FastifyRequest, reply: FastifyReply) => {
+    try {
+      const listAllToolsUseCase = new ListAllToolsUseCase(prismaToolsRepository);
+
+      const tools = await listAllToolsUseCase.execute();
+
+      return reply.status(200).send(tools);
+    } catch (error) {
+      if (error instanceof Error) {
+        console.log(`🚨 ERROR: ${error.message}`)
+
+        return reply.status(409).send({
+          message: "Internal Server Error",
+        });
+      };
+    };
+  });
 }
