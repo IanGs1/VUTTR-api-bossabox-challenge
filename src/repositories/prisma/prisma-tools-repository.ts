@@ -87,6 +87,12 @@ export class PrismaToolsRepository implements ToolsRepository{
   };
 
   async delete(id: string) {
+    await prismaClient.tag.deleteMany({
+      where: {
+        tool_id: id,
+      }
+    });
+    
     await prismaClient.tool.delete({
       where: {
         id,

@@ -4,6 +4,7 @@ import { PrismaToolsRepository } from "@/repositories/prisma/prisma-tools-reposi
 
 import { CreateToolUseCase } from "@/useCases/create-tool-useCase";
 import { ListAllToolsUseCase } from "@/useCases/list-all-tools-useCase";
+import { DeleteToolUseCase } from "@/useCases/delete-tool-useCase";
 
 import { z } from "zod";
 
@@ -53,6 +54,28 @@ export async function toolsController(app: FastifyInstance) {
 
         return reply.status(409).send({
           message: "Internal Server Error",
+        });
+      };
+    };
+  });
+
+  app.delete("/:toolId", async (request: FastifyRequest, reply: FastifyReply) => {
+    const deleteToolSchema = z.object({
+      toolId: z.string(),
+    });
+
+    const { toolId } = deleteToolSchema.parse(request.params);
+
+    try {
+      const deleteToolUseCase = new DeleteToolUseCase(prismaToolsRepository);
+
+      const deleteToolResponse = await deleteToolUseCase.execute(toolId);
+
+      return reply.status(200).send(deleteToolResponse);
+    } catch (error) {
+      if (error instanceof Error) {
+        return reply.status(409).send({
+          message: error.message,
         });
       };
     };
