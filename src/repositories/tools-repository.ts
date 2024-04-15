@@ -21,10 +21,10 @@ interface IFindById {
 }
 
 export interface ToolsRepository {
-  create(data: ICreateTool): Promise<ICreateTool | null>
-  listAll(): Promise<IReturnTool[] | null>
-  findByTags(tag: string): Promise<IReturnTool[] | null>
-  findById(id: string): Promise<IFindById | null>
-  findByTitle(title: string): Promise<IFindById | null>
-  delete(id: string): {}
+  create(data: ICreateTool, user_id: string): Promise<ICreateTool | null>
+  listAll(user_id: string): Promise<IReturnTool[] | null>
+  findByTags(tag: string, user_id: string): Promise<IReturnTool[] | null>
+  findById(id: string, user_id: string): Promise<IFindById | null>
+  findByTitle(title: string, user_id: string): Promise<IFindById | null>
+  delete(id: string, user_id: string): {}
 }
