@@ -45,8 +45,9 @@ export async function toolsController(app: FastifyInstance) {
     } catch (error) {
       if (error instanceof Error) {
         return reply.status(409).send({
+          status: "Error",
           message: error.message,
-        })
+        });
       };
     };
   });
